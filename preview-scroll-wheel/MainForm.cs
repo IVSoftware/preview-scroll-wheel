@@ -31,7 +31,12 @@ namespace prewiew_scroll_wheel
                         int delta = (int)m.WParam >> 16;
                         if (delta > 0) control.Scale(new SizeF(1.1f, 1.1f));
                         else control.Scale(new SizeF(0.9f, 0.9f));
+                        // Here to suppress furthur actions ONLY
+                        // for the ModifierKeys = Control case.
+                        // m.Result = (IntPtr)1;
+                        // return true;
                     }
+                    // Or here to suppress ALL normal functioning of the scroll wheel.
                     m.Result = (IntPtr)1;
                     return true;
                 }

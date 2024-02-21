@@ -1,15 +1,14 @@
 # Preview Scroll Wheel
-
 One approach is to set a hook in your `MainForm` using [IMessageFilter](https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.imessagefilter?view=windowsdesktop-8.0_).
 
 [![init][1]][1]
 
-In this example, a `RichTextBox` is placed on `SplitContainer.Panel2`. When the mouse wheel is scrolled, the effect on the text box is suppressed. 
+In this example, a `RichTextBox` is placed on `SplitContainer.Panel2`. When the mouse wheel is scrolled, the effect on the text box is suppressed. You actually have to drag the `VScrollBar` to scroll the text box. 
 
 [![suppressed][2]][2]
 
 
-You actually have to drag the `VScrollBar` to scroll the text box. But when the Control key is active, the size of the text box will scale.
+But when the Control key is active, the size of the text box will scale.
 
 [![scaling][3]][3]
 
@@ -43,7 +42,12 @@ public partial class MainForm : Form , IMessageFilter
                     int delta = (int)m.WParam >> 16;
                     if (delta > 0) control.Scale(new SizeF(1.1f, 1.1f));
                     else control.Scale(new SizeF(0.9f, 0.9f));
+                    // Return here to suppress further actions ONLY
+                    // for the ModifierKeys == Control case.
+                    // m.Result = (IntPtr)1;
+                    // return true;
                 }
+                // Or here to suppress ALL normal functioning of the scroll wheel.
                 m.Result = (IntPtr)1;
                 return true;
             }
@@ -61,6 +65,8 @@ public partial class MainForm : Form , IMessageFilter
         base.WndProc(ref m);
         return false;
     }
+    private const int WM_MOUSEWHEEL = 0x020A;
+}
     private const int WM_MOUSEWHEEL = 0x020A;
 }
 ```
